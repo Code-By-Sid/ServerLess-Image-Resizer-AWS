@@ -1,3 +1,4 @@
+http://image-resizer-buc-ket.s3-website.ap-south-1.amazonaws.com
 # 🖼️ Serverless Image Resizer using AWS Lambda & Amazon S3
 
 ## 📌 Project Overview
