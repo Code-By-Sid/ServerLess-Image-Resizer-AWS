@@ -383,22 +383,10 @@ Access the S3 Static Website endpoint in your browser.
 ---
 
 # 📸 Sample Output
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0eb7b4b4-d644-441a-a0d5-00babd1ff6cb" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2f3c0be7-a720-44b1-93e0-46943285346a" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/7aea7309-007a-4d07-96cb-1e20e017a0ff" />
 
-After uploading an image, the application displays:
-
-- Original Image
-- Resized Image
-- File Name
-- Image Format
-- Original Resolution
-- Resized Resolution
-- Original Size
-- Resized Size
-- Compression Percentage
-- Processing Time
-- Upload Time
-- Download Button
-- View Full Image Button
 
 ---
 
