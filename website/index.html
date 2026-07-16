@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixelforge — Serverless Image Resizer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='45' height='45' x='5' y='5' fill='%23FF6B4D'/%3E%3Crect width='45' height='45' x='50' y='5' fill='%230E7C66'/%3E%3Crect width='45' height='45' x='5' y='50' fill='%230E7C66'/%3E%3Crect width='45' height='45' x='50' y='50' fill='%23FF6B4D'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo">▣ Pixelforge</a>
+    <nav class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#upload">Resize an image</a>
+    </nav>
+    <a href="#upload" class="nav-cta">Start resizing</a>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="hero-content">
+    <p class="eyebrow">Serverless image pipeline</p>
+    <h1>Shrink images to size,<br>without a server in sight.</h1>
+    <p class="hero-sub">Drop in a photo, pick a target resolution, and a Lambda function resizes and compresses it straight into Amazon S3 — usually in under two seconds.</p>
+    <div class="hero-actions">
+      <a href="#upload" class="btn btn-primary">Resize an image</a>
+      <a href="#how" class="btn btn-ghost">See how it works</a>
+    </div>
+    <div class="hero-stats">
+      <div><strong>3</strong><span>resize presets</span></div>
+      <div><strong>&lt;2s</strong><span>typical processing</span></div>
+      <div><strong>100%</strong><span>serverless</span></div>
+    </div>
+  </div>
+  <div class="hero-grid" id="pixelGrid"></div>
+</section>
+
+<section class="how" id="how">
+  <p class="eyebrow center">The pipeline</p>
+  <h2 class="section-title center">Three steps, one Lambda function</h2>
+  <div class="how-steps">
+    <div class="step"><span class="step-num">01</span><h3>Upload</h3><p>Your image is read in the browser and sent as base64 to an API Gateway endpoint — no accounts, no plugins.</p></div>
+    <div class="step"><span class="step-num">02</span><h3>Resize</h3><p>A Lambda function resizes and compresses the image to the resolution you picked, on the fly.</p></div>
+    <div class="step"><span class="step-num">03</span><h3>Store &amp; serve</h3><p>Both versions land in S3, and you get back links, dimensions, and exactly how much space you saved.</p></div>
+  </div>
+</section>
+
+<section class="upload-section" id="upload">
+  <p class="eyebrow center">Try it</p>
+  <h2 class="section-title center">Resize an image</h2>
+
+  <div class="upload-layout">
+
+    <div class="card dropzone-card">
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="imageFile" accept="image/*" hidden>
+        <div class="dropzone-icon">⇪</div>
+        <p class="dropzone-title">Drag &amp; drop an image</p>
+        <p class="dropzone-sub">or <span class="link">browse your files</span> — JPG, PNG or WEBP</p>
+      </div>
+
+      <img id="previewImage" class="preview-image" alt="Selected image preview">
+
+      <div class="quality-picker">
+        <p class="field-label">Target resolution</p>
+        <div class="quality-cards" id="qualityCards">
+          <button type="button" class="quality-card" data-value="low"><span class="q-name">Low</span><span class="q-res">320 × 240</span></button>
+          <button type="button" class="quality-card selected" data-value="medium"><span class="q-name">Medium</span><span class="q-res">640 × 480</span></button>
+          <button type="button" class="quality-card" data-value="high"><span class="q-name">High</span><span class="q-res">1280 × 720</span></button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" id="uploadBtn" onclick="uploadImage()">Upload &amp; resize</button>
+
+      <div class="status-row" id="status">
+        <span class="status-dot"></span>
+        <span class="status-text">Waiting for an image</span>
+      </div>
+    </div>
+
+    <div class="card results-card">
+      <div class="results-empty" id="resultsEmpty">
+        <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+          <rect x="6" y="14" width="60" height="44" rx="6" stroke="#B9C6C1" stroke-width="2.5"/>
+          <circle cx="24" cy="30" r="5" stroke="#B9C6C1" stroke-width="2.5"/>
+          <path d="M6 50l16-14 12 10 10-8 22 20" stroke="#B9C6C1" stroke-width="2.5" stroke-linejoin="round"/>
+        </svg>
+        <p>Your before-and-after comparison and stats will show up here once you upload an image.</p>
+      </div>
+
+      <div class="compare" id="compare">
+        <img id="originalImage" class="compare-img" alt="Original image">
+        <div class="compare-clip" id="compareClip">
+          <img id="resizedImage" class="compare-img" alt="Resized image">
+        </div>
+        <div class="compare-handle" id="compareHandle"></div>
+        <input type="range" id="compareRange" class="compare-range" min="0" max="100" value="50">
+        <span class="compare-label left">Original</span>
+        <span class="compare-label right">Resized</span>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat"><div class="stat-label">File name</div><div class="stat-value" id="fileName">—</div></div>
+        <div class="stat"><div class="stat-label">Format</div><div class="stat-value" id="imageFormat">—</div></div>
+        <div class="stat"><div class="stat-label">Quality preset</div><div class="stat-value" id="quality">—</div></div>
+        <div class="stat"><div class="stat-label">Original resolution</div><div class="stat-value" id="originalResolution">—</div></div>
+        <div class="stat"><div class="stat-label">Resized resolution</div><div class="stat-value" id="resizedResolution">—</div></div>
+        <div class="stat"><div class="stat-label">Original size</div><div class="stat-value" id="originalSize">—</div></div>
+        <div class="stat"><div class="stat-label">Resized size</div><div class="stat-value" id="resizedSize">—</div></div>
+        <div class="stat"><div class="stat-label">Space saved</div><div class="stat-value highlight" id="savedSize">—</div></div>
+        <div class="stat"><div class="stat-label">Compression</div><div class="stat-value highlight" id="compression">—</div></div>
+        <div class="stat"><div class="stat-label">Processing time</div><div class="stat-value" id="processingTime">—</div></div>
+      </div>
+
+      <div class="result-actions" id="resultActions">
+        <a id="downloadBtn" download><button class="btn btn-secondary" style="width:100%;">⬇ Download</button></a>
+        <a id="viewBtn" target="_blank"><button class="btn btn-text" style="width:100%;">🔍 View full size</button></a>
+        <button class="btn btn-text" style="width:100%;" onclick="resetPage()">↺ Start over</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <p>Built on a serverless stack</p>
+  <div class="badges">
+    <span>AWS Lambda</span>
+    <span>Amazon S3</span>
+    <span>API Gateway</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
